@@ -1,6 +1,7 @@
 ﻿using APICatalogo.Context;
 using APICatalogo.Models;
 using APICatalogo.Pagination;
+using System.Linq.Expressions;
 
 namespace APICatalogo.Repository
 {
@@ -18,6 +19,11 @@ namespace APICatalogo.Repository
         public PagedList<Produto> GetProdutos(ProdutosParameters produtosParameters)
         {
             return PagedList<Produto>.ToPagedList(Get().OrderBy(p => p.ProdutoId), produtosParameters.PageNumber, produtosParameters.PageSize);
+        }
+
+        public PagedList<Produto> FindManyProdutosPagination(Expression<Func<Produto,bool>> expression, ProdutosParameters produtosParameters)
+        {
+            return PagedList<Produto>.ToPagedList(Get().AsQueryable().Where(expression), produtosParameters.PageNumber, produtosParameters.PageSize);
         }
     }
 }

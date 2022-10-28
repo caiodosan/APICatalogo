@@ -17,6 +17,10 @@ namespace APICatalogo.Repository
         {
             return _context.Set<T>().AsNoTracking();
         }
+        public IQueryable<T> FindMany(Expression<Func<T,bool>> expression)
+        {
+            return _context.Set<T>().AsNoTracking().AsQueryable().Where(expression);
+        }
 
         public T GetById(Expression<Func<T,bool>> predicate)
         {

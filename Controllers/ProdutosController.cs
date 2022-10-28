@@ -32,6 +32,26 @@ namespace APICatalogo.Controllers
             return produtoDTO;
         }
 
+        [HttpGet("porcategoria")]
+        public ActionResult<IEnumerable<ProdutoDTO>> GetProdutoPorCategoria(int categoriaId, [FromQuery] ProdutosParameters produtosParameters)
+        {
+            var prod = _context.ProdutoRepository.FindManyProdutosPagination(cat => cat.CategoriaId == categoriaId, produtosParameters);
+            var produtoDTO = _mapper.Map<List<ProdutoDTO>>(prod);
+            var metadata = new
+                {
+                    prod.TotalCount,
+                    prod.PageSize,
+                    prod.CurrentPage,
+                    prod.TotalPage,
+                    prod.HasNext,
+                    prod.HasPrevius
+
+                };
+
+                Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            return produtoDTO;
+        }
+
         [HttpGet]
 
         public ActionResult<IEnumerable<ProdutoDTO>> Get([FromQuery] ProdutosParameters produtosParameters )

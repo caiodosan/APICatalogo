@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace APICatalogo.Models
 {
@@ -9,6 +10,8 @@ namespace APICatalogo.Models
         {
             Produtos = new Collection<Produto>();
         }
+
+        [JsonIgnore]
         [Key]
         public int CategoriaId { get; set; }
 

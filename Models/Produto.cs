@@ -6,6 +6,7 @@ namespace APICatalogo.Models
 {
     public class Produto
     {
+        [JsonIgnore]
         [Key]
         public int ProdutoId { get; set; }
 

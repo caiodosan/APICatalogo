@@ -1,11 +1,13 @@
 ﻿using APICatalogo.Context;
 using APICatalogo.DTOs;
 using APICatalogo.Models;
+using APICatalogo.Pagination;
 using APICatalogo.Repository;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace APICatalogo.Controllers
 {
@@ -36,8 +38,30 @@ namespace APICatalogo.Controllers
             return cat;
         }
 
-        [HttpGet]
 
+        [HttpGet("categoriaPagina")]
+
+        public ActionResult<IEnumerable<CategoriaDTO>> CategoriaPagina([FromQuery] CategoriaasParameters categoriasParameters)
+        {
+            var cat = _context.CategoriaRepository.FindManyCategoriasPagination(_ => true, categoriasParameters);
+            var metadata = new
+            {
+                cat.TotalCount,
+                cat.PageSize,
+                cat.CurrentPage,
+                cat.TotalPage,
+                cat.HasNext,
+                cat.HasPrevius
+
+            };
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            var catDTO = _mapper.Map<List<CategoriaDTO>>(cat);
+            return catDTO;
+        }
+
+
+        [HttpGet]
         public ActionResult<IEnumerable<CategoriaDTO>> GetCategoria()
         {
             var prod = _context.CategoriaRepository.Get().ToList();
