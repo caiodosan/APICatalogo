@@ -6,7 +6,7 @@ namespace APICatalogo.Repository
     {
         IQueryable<T> Get();
         IQueryable<T> FindMany(Expression<Func<T, bool>> expression);
-        T GetById(Expression<Func<T, bool>> predicate); 
+        Task<T> GetById(Expression<Func<T, bool>> predicate); 
         void Add(T entity); 
         void Update(T entity);  
         void Delete(T entity);  

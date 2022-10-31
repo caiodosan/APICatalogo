@@ -6,9 +6,9 @@ namespace APICatalogo.Repository
 {
     public interface ICategoriaRepository :IRepository<Categoria>
     {
-        IEnumerable<Categoria> GetCategorias();
+        Task<IEnumerable<Categoria>> GetCategorias();
 
-        PagedList<Categoria> FindManyCategoriasPagination(Expression<Func<Categoria, bool>> expression, CategoriaasParameters categoriasParameters);
+        Task<PagedList<Categoria>> FindManyCategoriasPagination(Expression<Func<Categoria, bool>> expression, CategoriaasParameters categoriasParameters);
 
     }
 }

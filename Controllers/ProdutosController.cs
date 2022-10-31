@@ -25,17 +25,17 @@ namespace APICatalogo.Controllers
         }
 
         [HttpGet("menorpreco")]
-        public ActionResult<IEnumerable<ProdutoDTO>> GetProdutosPorPreco()
+        public async Task<ActionResult<IEnumerable<ProdutoDTO>>> GetProdutosPorPreco()
         {
-            var prod = _context.ProdutoRepository.GetProdutosPorPreco().ToList();
+            var prod = await _context.ProdutoRepository.GetProdutosPorPreco();
             var produtoDTO = _mapper.Map<List<ProdutoDTO>>(prod);
             return produtoDTO;
         }
 
         [HttpGet("porcategoria")]
-        public ActionResult<IEnumerable<ProdutoDTO>> GetProdutoPorCategoria(int categoriaId, [FromQuery] ProdutosParameters produtosParameters)
+        public async Task<ActionResult<IEnumerable<ProdutoDTO>>> GetProdutoPorCategoria(int categoriaId, [FromQuery] ProdutosParameters produtosParameters)
         {
-            var prod = _context.ProdutoRepository.FindManyProdutosPagination(cat => cat.CategoriaId == categoriaId, produtosParameters);
+            var prod = await _context.ProdutoRepository.FindManyProdutosPagination(cat => cat.CategoriaId == categoriaId, produtosParameters);
             var produtoDTO = _mapper.Map<List<ProdutoDTO>>(prod);
             var metadata = new
                 {
@@ -54,11 +54,11 @@ namespace APICatalogo.Controllers
 
         [HttpGet]
 
-        public ActionResult<IEnumerable<ProdutoDTO>> Get([FromQuery] ProdutosParameters produtosParameters )
+        public async Task<ActionResult<IEnumerable<ProdutoDTO>>> Get([FromQuery] ProdutosParameters produtosParameters )
         {
             try
             {
-                var prod = _context.ProdutoRepository.GetProdutos(produtosParameters);
+                var prod = await _context.ProdutoRepository.GetProdutos(produtosParameters);
                 var metadata = new
                 {
                     prod.TotalCount,
@@ -84,9 +84,9 @@ namespace APICatalogo.Controllers
 
 
         [HttpGet("{id:int}", Name ="ObterProduto")]
-        public ActionResult<ProdutoDTO> GetOne(int id)
+        public async Task<ActionResult<ProdutoDTO>> GetOne(int id)
         {
-            var prod = _context.ProdutoRepository.GetById(x => x.ProdutoId == id);
+            var prod = await _context.ProdutoRepository.GetById(x => x.ProdutoId == id);
             if (prod is null)
             {
                 return NotFound("produtos não encontrados");
@@ -97,7 +97,7 @@ namespace APICatalogo.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateOne(ProdutoDTO produto)
+        public async Task<ActionResult> CreateOne(ProdutoDTO produto)
         {
             if (produto is null)
             {
@@ -105,7 +105,7 @@ namespace APICatalogo.Controllers
             }
             var prod = _mapper.Map<Produto>(produto);
             _context.ProdutoRepository.Add(prod);
-            _context.Commit();
+            await _context.Commit();
             var produtoDTO = _mapper.Map<ProdutoDTO>(prod);
             return new CreatedAtRouteResult("ObterProduto", new { id = produto.ProdutoId }, produtoDTO);
 
@@ -113,7 +113,7 @@ namespace APICatalogo.Controllers
 
 
         [HttpPut("{id:int}")]
-        public ActionResult UpdateOne(int id ,ProdutoDTO produto)
+        public async Task<ActionResult> UpdateOne(int id ,ProdutoDTO produto)
         {
             if(id != produto.ProdutoId)
             {
@@ -121,7 +121,7 @@ namespace APICatalogo.Controllers
             }
             var prod = _mapper.Map<Produto>(produto);
             _context.ProdutoRepository.Update(prod);
-            _context.Commit();
+            await _context.Commit();
             var produtoDTO = _mapper.Map<ProdutoDTO>(prod);
 
             return Ok(produtoDTO);
@@ -130,11 +130,11 @@ namespace APICatalogo.Controllers
 
         [HttpDelete("{id:int}")]
 
-        public ActionResult DeleteOne(int id)
+        public async Task<ActionResult> DeleteOne(int id)
         {
-            var produto = _context.ProdutoRepository.GetById(x => x.ProdutoId == id);
+            var produto = await _context.ProdutoRepository.GetById(x => x.ProdutoId == id);
             _context.ProdutoRepository.Delete(produto);
-            _context.Commit();
+            await _context.Commit();
             if (produto is null)
             {
                 return NotFound("produto nao localizado");

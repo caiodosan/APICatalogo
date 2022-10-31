@@ -12,14 +12,14 @@ namespace APICatalogo.Repository
         {
         }
 
-        public IEnumerable<Categoria> GetCategorias()
+        public async Task<IEnumerable<Categoria>> GetCategorias()
         {
-            return Get().Include(x => x.Produtos);
+            return await Get().Include(x => x.Produtos).ToListAsync();
         }
 
-        public PagedList<Categoria> FindManyCategoriasPagination(Expression<Func<Categoria, bool>> expression, CategoriaasParameters categoriasParameters)
+        public async Task<PagedList<Categoria>> FindManyCategoriasPagination(Expression<Func<Categoria, bool>> expression, CategoriaasParameters categoriasParameters)
         {
-            return PagedList<Categoria>.ToPagedList(Get().AsQueryable().Where(expression), categoriasParameters.PageNumber, categoriasParameters.PageSize);
+            return  await PagedList<Categoria>.ToPagedList(Get().AsQueryable().Where(expression), categoriasParameters.PageNumber, categoriasParameters.PageSize);
         }
     }
 }

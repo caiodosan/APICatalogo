@@ -1,6 +1,7 @@
 ﻿using APICatalogo.Context;
 using APICatalogo.Models;
 using APICatalogo.Pagination;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace APICatalogo.Repository
@@ -11,19 +12,19 @@ namespace APICatalogo.Repository
         {
         }
 
-        public IEnumerable<Produto> GetProdutosPorPreco()
+        public async Task<IEnumerable<Produto>> GetProdutosPorPreco()
         {
-            return Get().OrderBy(p => p.Preco).ToList();
+            return await Get().OrderBy(p => p.Preco).ToListAsync();
         }
 
-        public PagedList<Produto> GetProdutos(ProdutosParameters produtosParameters)
+        public async Task<PagedList<Produto>> GetProdutos(ProdutosParameters produtosParameters)
         {
-            return PagedList<Produto>.ToPagedList(Get().OrderBy(p => p.ProdutoId), produtosParameters.PageNumber, produtosParameters.PageSize);
+            return await PagedList<Produto>.ToPagedList(Get().OrderBy(p => p.ProdutoId), produtosParameters.PageNumber, produtosParameters.PageSize);
         }
 
-        public PagedList<Produto> FindManyProdutosPagination(Expression<Func<Produto,bool>> expression, ProdutosParameters produtosParameters)
+        public async Task<PagedList<Produto>> FindManyProdutosPagination(Expression<Func<Produto,bool>> expression, ProdutosParameters produtosParameters)
         {
-            return PagedList<Produto>.ToPagedList(Get().AsQueryable().Where(expression), produtosParameters.PageNumber, produtosParameters.PageSize);
+            return await PagedList<Produto>.ToPagedList(Get().AsQueryable().Where(expression), produtosParameters.PageNumber, produtosParameters.PageSize);
         }
     }
 }
