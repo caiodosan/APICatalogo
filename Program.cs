@@ -22,7 +22,13 @@ IMapper mapper = mappingConfig.CreateMapper();
 
 builder.Services.AddSingleton(mapper);
 
+builder.Services.AddCors(op =>
+{
+    op.AddPolicy("EnableApi",
+        x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+});
 // Add services to the container.
+
 builder.Services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -54,6 +60,7 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
 
 string mySqlConnection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(mySqlConnection,ServerVersion.AutoDetect(mySqlConnection)));
@@ -88,9 +95,14 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
+app.UseCors("EnableApi");
+
 app.UseAuthentication();
 
-app.UseAuthorization(); 
+app.UseAuthorization();
+
+//Definir politica para toa aplicação restritiva
+//app.UseCors(opt => opt.AllowAnyOrigin().WithMethods("GET,POST").AllowAnyHeader());
 
 app.MapControllers();
 

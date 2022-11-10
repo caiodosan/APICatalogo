@@ -4,7 +4,9 @@ using APICatalogo.Models;
 using APICatalogo.Pagination;
 using APICatalogo.Repository;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,9 +14,11 @@ using Newtonsoft.Json;
 
 namespace APICatalogo.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("[controller]")]
     [ApiController]
+    [EnableCors("EnableApi")]
     public class CategoriasController : ControllerBase
     {
         private readonly IUnityOfWork _context;
@@ -76,16 +80,16 @@ namespace APICatalogo.Controllers
         }
 
 
-        [HttpGet("{id:int}", Name = "ObterCategoria")]
-        public async Task<ActionResult<Categoria>> GetOne(int id)
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<CategoriaDTO>> GetOne(int id)
         {
             var cat = await _context.CategoriaRepository.GetById(x => x.CategoriaId == id);
             if (cat is null)
             {
                 return NotFound("Categorias não encontradas");
             }
-            cat = _mapper.Map<Categoria>(cat);
-            return cat;
+            var catdto = _mapper.Map<CategoriaDTO>(cat);
+            return catdto;
 
         }
 
